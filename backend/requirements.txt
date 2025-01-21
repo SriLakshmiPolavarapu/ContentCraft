@@ -1,6 +1,6 @@
 flask
-google-cloud-to-speech
-spacy
+google-cloud-speech-to-text
+spaCy
 transformers
 openai
 natural language processing - tokenizer

@@ -1,0 +1,7 @@
+flask
+google-cloud-to-speech
+spacy
+transformers
+openai
+natural language processing - tokenizer
+streamlit

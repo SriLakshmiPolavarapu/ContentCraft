@@ -22,4 +22,17 @@ def generate_linkedin_post():
     input_type = data.get('input_type')
     content = data.get('content')
     
+    #Processing audio input (speech-to-text)
+    if input_type == "video":
+        client = speech.SpeechClient()
+        audio = speech.RecognitionAudio(content=content)
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+            sample_rate_hertz=16000,
+            language_code="en-US"
+        )
+        response = client.recognize(config=config, audio=audio)
+        text = response.results[0].alternatives[0].transcript
+    else:
+        transcript = content    
 

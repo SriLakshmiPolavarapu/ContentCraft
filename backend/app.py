@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import spacy
-from transformers import pipeline
-import nltk
+import os
 
 nltk.download('punkt')
 #stopwords: and, is, in (common words)

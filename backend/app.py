@@ -12,7 +12,12 @@ nlp = spacy.load("en_core_web_sm")
 #function to generate summary
 def generate_summary(content):
     try:
-        #....   
+        #process input
+        doc = nlp(content)
+        
+        #count words to decide summary length
+        word_count = len(content.split())
+        max_length = 10 if word_count > 100 else 5
     except Exception as e:
         print(f"There was an error in generating summary: {e}")   
         raise 

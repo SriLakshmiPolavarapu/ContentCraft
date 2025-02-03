@@ -21,6 +21,13 @@ def generate_summary(content):
         
         #extract important words from the input
         main_words = [token.text.lower() for token in doc if token.pos_ in ["NOUN", "PROPN","VERB", "ADJ", "ADV"]]
+        
+        sentence_scores={}
+        for sent in doc.sents:
+            score = sum(1 for token in sent if token.text.lower() in main_words)
+            sentence_scores[sent.text] = score
+            
+       
     except Exception as e:
         print(f"There was an error in generating summary: {e}")   
         raise 

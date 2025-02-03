@@ -39,13 +39,29 @@ def generate_summary(content):
         print(f"There was an error in generating summary: {e}")   
         raise 
 
-
-
+@app.route("/generate_summary", methods=["POST"])
 #fucntion to handle summary generation
 def generate_summary_endpoint():
-     
-        
-@app.route("/generate_summary", methods=["POST"])
+    try:
+        if request.content_type.startswith("multipart/form-data"):
+            data = request.form
+            uploaded_file = request.files.get("content")
+        else:
+            data = request.json
+            uploaded_file = None
+            content = data.get("content", "")
+            if not content:
+                return jsonify({"error": "No content provided"}), 400
+            
+            summary = generate_summary(content)
+            return jsonify({"summary": summary}), 200
+    except Exception as e:
+        print(f"Error processing request: {e}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/", methods=["GET"])
+def health_check():
+    return "Python -Falsk backend is running", 200
 
 
 if __name__ == "__main__":

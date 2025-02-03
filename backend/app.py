@@ -18,6 +18,9 @@ def generate_summary(content):
         #count words to decide summary length
         word_count = len(content.split())
         max_length = 10 if word_count > 100 else 5
+        
+        #extract important words from the input
+        main_words = [token.text.lower() for token in doc if token.pos_ in ["NOUN", "PROPN","VERB", "ADJ", "ADV"]]
     except Exception as e:
         print(f"There was an error in generating summary: {e}")   
         raise 

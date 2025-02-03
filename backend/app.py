@@ -17,16 +17,23 @@ def generate_summary(content):
         
         #count words to decide summary length
         word_count = len(content.split())
-        max_length = 10 if word_count > 100 else 5
+        max_sentence_length = 10 if word_count > 100 else 5
         
         #extract important words from the input
         main_words = [token.text.lower() for token in doc if token.pos_ in ["NOUN", "PROPN","VERB", "ADJ", "ADV"]]
         
+        #score is calculated
         sentence_scores={}
         for sent in doc.sents:
             score = sum(1 for token in sent if token.text.lower() in main_words)
             sentence_scores[sent.text] = score
-            
+         
+        #top ranked sentences are selected    
+        sorted_sentences = sorted(sentence_scores, key=sentence_scores.get, reverse=True)
+        summary_sentence = sorted_sentences[:max_sentence_length]
+        
+        summary = " ".join(summary_sentence)
+        return summary.strip()
        
     except Exception as e:
         print(f"There was an error in generating summary: {e}")   

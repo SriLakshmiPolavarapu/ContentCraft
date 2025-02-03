@@ -61,7 +61,7 @@ def generate_summary_endpoint():
 
 @app.route("/", methods=["GET"])
 def health_check():
-    return "Python -Falsk backend is running", 200
+    return "Python - Flask backend is running", 200
 
 
 if __name__ == "__main__":

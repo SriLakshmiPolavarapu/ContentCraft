@@ -2,10 +2,6 @@ from flask import Flask, request, jsonify
 import spacy
 import os
 
-nltk.download('punkt')
-#stopwords: and, is, in (common words)
-nltk.download('stopwords')
-
 #initializing Flask application by creating an instance of Flask class
 app = Flask(__name__)
 

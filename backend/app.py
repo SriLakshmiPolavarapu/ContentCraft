@@ -8,6 +8,20 @@ app = Flask(__name__)
 #NLP setup
 nlp = spacy.load("en_core_web_sm")
 
+#upload file option
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+#function to read content from the text file
+def read_file(file_path):
+    try:
+        with open(file_path, "r") as file:
+            content = file.read()
+        return content
+    except Exception as e:
+        print(f"Error reading the input file: {e}")
+        return ""
 
 #function to generate summary
 def generate_summary(content):
@@ -43,18 +57,22 @@ def generate_summary(content):
 #fucntion to handle summary generation
 def generate_summary_endpoint():
     try:
-        if request.content_type.startswith("multipart/form-data"):
-            data = request.form
-            uploaded_file = request.files.get("content")
+        if "content" in request.files:
+            #if the input is file upload
+            uploaded_file = request.files["content"]
+            if uploaded_file.filename == "":
+                return jsonify({"error": "No file uploaded"}), 400
+            file_path = os.path.join(app.config["UPLOAD_FOLDER"], uploaded_file.filename)
+            uploaded_file.save(file_path)
+            content = read_file(file_path)
         else:
             data = request.json
-            uploaded_file = None
             content = data.get("content", "")
-            if not content:
-                return jsonify({"error": "No content provided"}), 400
+        if not content:
+                return jsonify({"error": "No content provided, please provide content or upload a file"}), 400
             
-            summary = generate_summary(content)
-            return jsonify({"summary": summary}), 200
+        summary = generate_summary(content)
+        return jsonify({"summary": summary}), 200
     except Exception as e:
         print(f"Error processing request: {e}")
         return jsonify({"error": str(e)}), 500

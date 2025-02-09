@@ -11,8 +11,15 @@ app = Flask(__name__)
 summarizer = pipeline("summary", model="facebook/bart-large-cnn")
 question_answer = pipeline("question_answering", model="deepset/roberta-large-squad2")
 
-#need to initialize YAKE
-keyword_extractor = yake.KeywordExtractor();
+#YAKE
+#function to extract most important keywords from the text
+def extract_keywords(text, max_keywords = 10):
+    try:
+        keywords = yake.KeywordExtractor().extract_keywords(text)
+        top_words = [kwords[0] for kwords in keywords[:max_keywords]]
+        return top_words
+    except Exception as e:
+        return []
 
 #upload file option
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")

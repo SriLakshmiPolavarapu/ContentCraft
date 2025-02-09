@@ -8,8 +8,8 @@ from transformers import pipeline
 app = Flask(__name__)
 
 #Instaed of NLP setup, i'm using Hugging Face models are better summary as well as better Q&A system
-summarizer = pipeline("summary", model="facebook/bart-large-cnn")
-question_answer = pipeline("question_answering", model="deepset/roberta-large-squad2")
+summary_model = pipeline("summary", model="facebook/bart-large-cnn")
+question_answer_model = pipeline("question_answering", model="deepset/roberta-large-squad2")
 
 #YAKE
 #function to extract most important keywords from the text
@@ -48,18 +48,35 @@ def generate_summary(content):
 
         important_keywords = extract_keywords(content)
 
-        summary = summarizer(content, max_length=150, min_length=50, do_sample=False)
+        summary = summary_model(content, max_length=150, min_length=50, do_sample=False)
         summary_text = summary[0]["summary_text"]
 
         if any(keyword.lower() in summary_text.lower() for keyword in important_keywords):
             return summary_text
         else:
-            summary = summarizer(content, max_length=150, min_length=50, do_sample=True)
+            summary = summary_model(content, max_length=150, min_length=50, do_sample=True)
             return summary[0]["summary_text"]
     except Exception as e:
         return f"Error generating summary: {e}"
        
-     
+# function for question-answering system
+def answer_question(context, question):
+    try:
+        #make sure, question ends with a '?'
+        if not question.strip().endswith("?"):
+            question = question.strip() + "?"
+            
+        response = question_answer_model(question=question, context=context)
+         
+        threshold = 0.05 #if confidence score is > than 0.05, it gives the answer
+        #otherwise it asks the user to rephrase the question.
+        if response["score"] > threshold:
+            return response['answer']
+        else:
+            return "No relevant answer found. Please try rephrasing your question!."
+    except Exception as e:
+        return f"Error answering question: {e}"  
+    
 
 @app.route("/generate_summary", methods=["POST"])
 #fucntion to handle summary generation

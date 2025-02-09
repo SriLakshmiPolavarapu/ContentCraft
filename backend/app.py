@@ -79,27 +79,33 @@ def answer_question(context, question):
     
 
 @app.route("/generate_summary", methods=["POST"])
-#fucntion to handle summary generation
+#function to handle summary generation
 def generate_summary_endpoint():
     try:
-        if "content" in request.files:
-            #if the input is file upload
-            uploaded_file = request.files["content"]
-            if uploaded_file.filename == "":
-                return jsonify({"error": "No file uploaded"}), 400
-            file_path = os.path.join(app.config["UPLOAD_FOLDER"], uploaded_file.filename)
-            uploaded_file.save(file_path)
-            content = read_file(file_path)
-        else:
-            data = request.json
-            content = data.get("content", "")
+        content = request.json.get("content", "")
         if not content:
-                return jsonify({"error": "No content provided, please provide content or upload a file"}), 400
-            
+            return jsonify({"error": "No content provided."}), 400
+
         summary = generate_summary(content)
         return jsonify({"summary": summary}), 200
     except Exception as e:
-        print(f"Error processing request: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/ask_question", methods=["POST"])
+#function to handle answer-question generation
+def ask_question_endpoint():
+    try:
+        data = request.json
+        content = data.get("content", "")
+        question = data.get("question", "")
+
+        if not content or not question:
+            return jsonify({"error": "Content and question must be provided."}), 400
+
+        answer = answer_question(content, question)
+        return jsonify({"answer": answer}), 200
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 @app.route("/", methods=["GET"])

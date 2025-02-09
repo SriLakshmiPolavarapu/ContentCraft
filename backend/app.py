@@ -1,12 +1,18 @@
 from flask import Flask, request, jsonify
 import spacy
 import os
+import yake
+from transformers import pipeline
 
 #initializing Flask application by creating an instance of Flask class
 app = Flask(__name__)
 
-#NLP setup
-nlp = spacy.load("en_core_web_sm")
+#Instaed of NLP setup, i'm using Hugging Face models are better summary as well as better Q&A system
+summarizer = pipeline("summary", model="facebook/bart-large-cnn")
+question_answer = pipeline("question_answering", model="deepset/roberta-large-squad2")
+
+#need to initialize YAKE
+keyword_extractor = yake.KeywordExtractor();
 
 #upload file option
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")

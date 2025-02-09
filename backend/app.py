@@ -39,32 +39,27 @@ def read_file(file_path):
 #function to generate summary
 def generate_summary(content):
     try:
-        #process input
-        doc = nlp(content)
-        
-        #count words to decide summary length
-        word_count = len(content.split())
-        max_sentence_length = 10 if word_count > 100 else 5
-        
-        #extract important words from the input
-        main_words = [token.text.lower() for token in doc if token.pos_ in ["NOUN", "PROPN","VERB", "ADJ", "ADV"]]
-        
-        #score is calculated
-        sentence_scores={}
-        for sent in doc.sents:
-            score = sum(1 for token in sent if token.text.lower() in main_words)
-            sentence_scores[sent.text] = score
-         
-        #top ranked sentences are selected    
-        sorted_sentences = sorted(sentence_scores, key=sentence_scores.get, reverse=True)
-        summary_sentence = sorted_sentences[:max_sentence_length]
-        
-        summary = " ".join(summary_sentence)
-        return summary.strip()
-       
+        content = content.strip()  
+        content = " ".join(content.split())  
+
+        max_input_length = 1024  
+        if len(content.split()) > max_input_length:
+            content = " ".join(content.split()[:max_input_length])
+
+        important_keywords = extract_keywords(content)
+
+        summary = summarizer(content, max_length=150, min_length=50, do_sample=False)
+        summary_text = summary[0]["summary_text"]
+
+        if any(keyword.lower() in summary_text.lower() for keyword in important_keywords):
+            return summary_text
+        else:
+            summary = summarizer(content, max_length=150, min_length=50, do_sample=True)
+            return summary[0]["summary_text"]
     except Exception as e:
-        print(f"There was an error in generating summary: {e}")   
-        raise 
+        return f"Error generating summary: {e}"
+       
+     
 
 @app.route("/generate_summary", methods=["POST"])
 #fucntion to handle summary generation

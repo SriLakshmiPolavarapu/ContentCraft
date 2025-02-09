@@ -21,20 +21,6 @@ def extract_keywords(text, max_keywords = 10):
     except Exception as e:
         return []
 
-#upload file option
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-#function to read content from the text file
-def read_file(file_path):
-    try:
-        with open(file_path, "r") as file:
-            content = file.read()
-        return content
-    except Exception as e:
-        print(f"Error reading the input file: {e}")
-        return ""
 
 #function to generate summary
 def generate_summary(content):

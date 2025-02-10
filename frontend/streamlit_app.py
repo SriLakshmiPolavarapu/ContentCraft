@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import PyPDF2
 
 # Set up the Streamlit page
 st.set_page_config(
@@ -19,6 +20,10 @@ if 'actual_content' not in st.session_state:
 if 'question' not in st.session_state:
    st.session_state.question = ""
 
+def extract_text_from_pdf(uploaded_file):
+    pdf_reader = PyPDF2.PdfReader(uploaded_file)
+    text = "\n".join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
+    return text
 
 # Main function for the Streamlit app
 def main():
@@ -48,6 +53,11 @@ def main():
         if uploaded_file:
             content = uploaded_file.read().decode("utf-8")
 
+    elif input_type == "Upload PDF File":
+        st.subheader("Upload the PDF file below to extract text:")
+        uploaded_file = st.file_uploader("", type=["pdf"])
+        if uploaded_file:
+            content = extract_text_from_pdf(uploaded_file)
 
     # Generate Summary button
     if st.button("Generate Summary"):

@@ -8,7 +8,17 @@ st.set_page_config(
 )
 
 # Backend API URL
-API_URL = "http://127.0.0.1:5000/generate_summary"
+SUMMARY_API_URL = "http://127.0.0.1:5000/generate_summary"
+QA_API_URL = "http://127.0.0.1:5000/ask_question"
+
+#to store actual content, summary and question 
+if 'generated_summary' not in st.session_state:
+   st.session_state.generated_summary = ""
+if 'actual_content' not in st.session_state:
+   st.session_state.actual_content = ""
+if 'question' not in st.session_state:
+   st.session_state.question = ""
+
 
 # Main function for the Streamlit app
 def main():
@@ -35,6 +45,8 @@ def main():
     elif input_type == "Upload Text File":
         st.subheader("Upload the text file below to generate the summary:")
         uploaded_file = st.file_uploader("", type=["txt"])
+        if uploaded_file:
+            content = uploaded_file.read().decode("utf-8")
 
 
     # Generate Summary button

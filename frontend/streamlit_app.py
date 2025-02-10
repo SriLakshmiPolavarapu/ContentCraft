@@ -82,6 +82,31 @@ def main():
                     st.error("An unexpected error occurred while generating the summary.")
                     st.write(f"Error details: {e}")
     
+        if st.session_state.generated_summary:
+            st.subheader("This is the Generated Summary:")
+            st.write(st.session_state.generated_summary)
+            st.subheader("Ask a question based on the input:")
+            question = st.text_input("Enter your question here:", placeholder="Enter your question here:", value=st.session_state.question)
+            get_answer_button = st.button("Get Answer")
+            if get_answer_button:
+                if not question.strip():
+                    st.error("Please enter a question.")
+                else:
+                    with st.spinner("Fetching answer..."):
+                        try:
+                            data = {"content": st.session_state.original_content, "question": question}
+                            response = requests.post(QA_API_URL, json=data)
+                            if response.status_code == 200:
+                                result = response.json()
+                                st.success("Answer:")
+                                st.write(result["answer"])
+                            else:
+                                st.error("Error fetching the answer.")
+                                st.write(f"Details: {response.json().get('error', 'Unknown error')}")
+                        except Exception as e:
+                            st.error("An unexpected error occurred while answering the question.")
+                            st.write(f"Error details: {e}")
+
 
 # Run the app
 if __name__ == "__main__":

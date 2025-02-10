@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify
-import spacy
-import os
 import yake
 from transformers import pipeline
 
@@ -8,8 +6,8 @@ from transformers import pipeline
 app = Flask(__name__)
 
 #Instaed of NLP setup, i'm using Hugging Face models are better summary as well as better Q&A system
-summary_model = pipeline("summary", model="facebook/bart-large-cnn")
-question_answer_model = pipeline("question_answering", model="deepset/roberta-large-squad2")
+summary_model = pipeline("summarization", model="facebook/bart-large-cnn")
+question_answer_model = pipeline("question-answering", model="deepset/roberta-large-squad2")
 
 #YAKE
 #function to extract most important keywords from the text

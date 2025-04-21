@@ -9,8 +9,8 @@ st.set_page_config(
 )
 
 # Backend API URLs
-SUMMARY_API_URL = "http://127.0.0.1:5000/generate_summary"
-QA_API_URL = "http://127.0.0.1:5000/ask_question"
+SUMMARY_API_URL = ""
+QA_API_URL = ""
 
 # Store actual content, summary, and question in session state
 if 'generated_summary' not in st.session_state:
